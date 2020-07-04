@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
-import { map } from "underscore";
-
 import "./Home.scss";
+
+import Header from '../Header/Header'
 
 import { ReactComponent as User } from "../../images/user.svg";
 import { ReactComponent as Star } from "../../images/stars.svg";
@@ -29,7 +29,14 @@ export default class Home extends Component {
   render() {
     return (
       <div className="Home">
-        <p className="header">Header</p>
+        <Header
+            title={TITLE}
+            userName='Иванов Иван Иванович'
+            className='Home-Header'
+            renderIcon={() => (
+                <House className='Header-Icon'/>
+            )}
+        />
         <div className="Home-Body">
           <div className="SectionNavigation">
             {SECTIONS.map(({ title, href, Icon }, index) => (
