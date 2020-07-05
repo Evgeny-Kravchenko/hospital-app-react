@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import { Form } from "reactstrap";
 import Moment from "react-moment";
-import { filter } from "underscore";
+import {filter} from "underscore";
 
 import Table from "../Table/Table";
 import Header from "../Header/Header";
@@ -48,7 +48,6 @@ export default class Appointments extends Component {
 
   render() {
     const { startDate, endDate, clientName, onlyMe } = this.state.filter;
-
     let filtered = filter(data, (o) => {
       return (
         (startDate ? o.date >= startDate : true) &&
@@ -61,6 +60,7 @@ export default class Appointments extends Component {
         (onlyMe ? o.holderName === USER : true)
       );
     });
+
 
     return (
       <div className="Appointments">

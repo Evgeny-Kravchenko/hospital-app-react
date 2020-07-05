@@ -2,7 +2,9 @@ import React, { Component } from "react";
 
 import "./Home.scss";
 
-import Header from '../Header/Header'
+import Header from "../Header/Header";
+
+import { Link } from "react-router-dom";
 
 import { ReactComponent as User } from "../../images/user.svg";
 import { ReactComponent as Star } from "../../images/stars.svg";
@@ -30,20 +32,18 @@ export default class Home extends Component {
     return (
       <div className="Home">
         <Header
-            title={TITLE}
-            userName='Иванов Иван Иванович'
-            className='Home-Header'
-            renderIcon={() => (
-                <House className='Header-Icon'/>
-            )}
+          title={TITLE}
+          userName="Иванов Иван Иванович"
+          className="Home-Header"
+          renderIcon={() => <House className="Header-Icon" />}
         />
         <div className="Home-Body">
           <div className="SectionNavigation">
             {SECTIONS.map(({ title, href, Icon }, index) => (
-              <a key={index} className="SectionNavigation-Item Section" href="#">
+              <Link key={index} className="SectionNavigation-Item Section" to={href}>
                 <Icon className="Section-Icon" />
                 <span className="Section-Title">{title}</span>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
