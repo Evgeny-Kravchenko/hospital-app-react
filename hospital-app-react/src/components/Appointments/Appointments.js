@@ -5,20 +5,26 @@ import Moment from "react-moment";
 
 import Table from "../Table/Table";
 import Header from "../Header/Header";
+import Loader from "../Loader/Loader";
 import TextField from "../TextField/TextField";
 import DateField from "../DateField/DateField";
 import CheckboxField from "../CheckboxField/CheckboxField";
+
+import service from "../../services/AppointmentService";
 
 import "./Appointments.scss";
 
 import { ReactComponent as Appointment } from "../../images/medical-appointment.svg";
 
-import { getAppointments } from "../../lib/MockData";
+import { getAppointments } from "../../lib/mock/MockData";
 
 const TITLE = "Приёмы";
+const USER = "Иванов Иван Иванович";
 
 export default class Appointments extends Component {
   state = {
+    data: null,
+    isLoading: false,
     filter: {
       startDate: null,
       endDate: null,
@@ -26,6 +32,10 @@ export default class Appointments extends Component {
       onlyMe: false,
     },
   };
+
+  componentDidMount() {
+    this.load();
+  }
 
   onChangeFilterField = (name, value) => {
     const { filter } = this.state;
@@ -43,15 +53,31 @@ export default class Appointments extends Component {
     });
   };
 
+  load() {
+    this.setState({ isLoading: true });
+    service.find({ filter: this.state.filter }).then(({ success, data }) => {
+      if (success) {
+        this.setState({
+          data,
+          isLoading: false,
+        });
+      }
+    });
+  }
+
   render() {
-    const { startDate, endDate, clientName, onlyMe } = this.state.filter;
+    const {
+      data,
+      isLoading,
+      filter: { startDate, endDate, clientName, onlyMe },
+    } = this.state;
     let filtered = getAppointments({ startDate, endDate, clientName, onlyMe });
 
     return (
       <div className="Appointments">
         <Header
           title={TITLE}
-          userName="Иванов Иван Иванович"
+          userName={USER}
           className="Appointments-Header"
           renderIcon={() => <Appointment className="Header-Icon" />}
         />
@@ -94,54 +120,60 @@ export default class Appointments extends Component {
               />
             </Form>
           </div>
-          <Table
-            data={filtered}
-            className="AppointmentList"
-            columns={[
-              {
-                dataField: "date",
-                text: "Дата",
-                headerStyle: {
-                  width: "150px",
+          {isLoading ? (
+            <Loader />
+          ) : data ? (
+            <Table
+              data={filtered}
+              className="AppointmentList"
+              columns={[
+                {
+                  dataField: "date",
+                  text: "Дата",
+                  headerStyle: {
+                    width: "150px",
+                  },
+                  formatter: (v) => {
+                    return <Moment date={v} format="DD.MM.YYYY HH.mm" />;
+                  },
                 },
-                formatter: (v) => {
-                  return <Moment date={v} format="DD.MM.YYYY HH.mm" />;
+                {
+                  dataField: "clientName",
+                  text: "Клиент",
+                  headerStyle: {
+                    width: "300px",
+                  },
                 },
-              },
-              {
-                dataField: "clientName",
-                text: "Клиент",
-                headerStyle: {
-                  width: "300px",
+                {
+                  dataField: "status",
+                  text: "Статус",
                 },
-              },
-              {
-                dataField: "status",
-                text: "Статус",
-              },
-              {
-                dataField: "holderName",
-                text: "Принимающий",
-                headerStyle: {
-                  width: "300px",
+                {
+                  dataField: "holderName",
+                  text: "Принимающий",
+                  headerStyle: {
+                    width: "300px",
+                  },
                 },
-              },
-              {
-                dataField: "compliences",
-                text: "Жалобы",
-                headerStyle: {
-                  width: "200px",
+                {
+                  dataField: "compliences",
+                  text: "Жалобы",
+                  headerStyle: {
+                    width: "200px",
+                  },
                 },
-              },
-              {
-                dataField: "diagnosis",
-                text: "Диагноз",
-                headerStyle: {
-                  width: "200px",
+                {
+                  dataField: "diagnosis",
+                  text: "Диагноз",
+                  headerStyle: {
+                    width: "200px",
+                  },
                 },
-              },
-            ]}
-          />
+              ]}
+            />
+          ) : (
+            "Нет данных"
+          )}
         </div>
       </div>
     );
